@@ -1,117 +1,119 @@
-module.exports = function(app, passport, db) {
 
-// normal routes ===============================================================
 
-    // show the home page (will also have our login links)
-    app.get('/', function(req, res) {
-        res.render('index.ejs');
+
+const Workout = require('./models/workout');
+const User = require('./models/user');
+const bcrypt = require('bcryptjs');
+
+module.exports = function (app, passport) {
+    // Home route
+    app.get('/', (req, res) => res.render('index'));
+
+    // Login route
+    app.get('/login', (req, res) => res.render('login', { message: req.flash('loginMessage') }));
+    app.post('/login', passport.authenticate('local-login', {
+        successRedirect: '/profile',
+        failureRedirect: '/login',
+        failureFlash: true
+    }));
+
+    // Signup route
+    app.get('/signup', (req, res) => res.render('signup', { message: req.flash('signupMessage') }));
+    app.post('/signup', async (req, res) => {
+        try {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            await new User({ email: req.body.email, password: hashedPassword }).save();
+            res.redirect('/login');
+        } catch (err) {
+            res.redirect('/signup');
+        }
     });
 
-    // PROFILE SECTION =========================
-    app.get('/profile', isLoggedIn, function(req, res) {
-        db.collection('messages').find().toArray((err, result) => {
-          if (err) return console.log(err)
-          res.render('profile.ejs', {
-            user : req.user,
-            messages: result
-          })
-        })
+    // Profile route
+    app.get('/profile', isLoggedIn, async (req, res) => {
+      try {
+          const workouts = await Workout.find({ userId: req.user._id });
+          res.render('profile', { user: req.user, workouts });
+      } catch (err) {
+          console.error(err);
+          res.redirect('/');
+      }
+  });
+  
+
+
+   
+
+    // Route to add a new workout
+   
+    app.post('/profile/workouts', isLoggedIn, async (req, res) => {
+      try {
+          const newWorkout = new Workout({
+              title: req.body.title,
+              description: req.body.description,
+              day: req.body.day,
+              userId: req.user._id
+          });
+          await newWorkout.save();
+          res.redirect('/profile'); // Redirect to profile page after adding a workout
+      } catch (err) {
+          console.error(err);
+          res.redirect('/profile');
+      }
+  });
+  
+  
+  app.put('/workouts/:id', isLoggedIn, async (req, res) => {
+    try {
+        await Workout.findByIdAndUpdate(req.params.id, { completed: true });
+        res.json({ message: 'Workout marked as completed' });
+    } catch (err) {
+        console.error('Error marking workout as completed:', err);
+        res.status(500).json({ error: 'Failed to update workout' });
+    }
+});
+
+
+
+
+
+
+
+
+
+    // Mark workout as completed
+    app.put('/workouts/:id', isLoggedIn, async (req, res) => {
+        try {
+            await Workout.findByIdAndUpdate(req.params.id, { completed: req.body.completed });
+            res.json({ message: 'Workout updated' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Error updating workout');
+        }
     });
 
-    // LOGOUT ==============================
-    app.get('/logout', function(req, res) {
+    // Delete a workout
+    app.delete('/workouts/:id', isLoggedIn, async (req, res) => {
+        try {
+            await Workout.findByIdAndDelete(req.params.id);
+            res.json({ message: 'Workout deleted' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Error deleting workout');
+        }
+    });
+
+    // Logout
+    app.get('/logout', (req, res) => {
         req.logout(() => {
-          console.log('User has logged out!')
+            console.log('User logged out');
         });
         res.redirect('/');
     });
 
-// message board routes ===============================================================
-
-    app.post('/messages', (req, res) => {
-      db.collection('messages').save({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
-        if (err) return console.log(err)
-        console.log('saved to database')
-        res.redirect('/profile')
-      })
-    })
-
-    app.put('/messages', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
-        $set: {
-          thumbUp:req.body.thumbUp + 1
-        }
-      }, {
-        sort: {_id: -1},
-        upsert: true
-      }, (err, result) => {
-        if (err) return res.send(err)
-        res.send(result)
-      })
-    })
-
-    app.delete('/messages', (req, res) => {
-      db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
-        if (err) return res.send(500, err)
-        res.send('Message deleted!')
-      })
-    })
-
-// =============================================================================
-// AUTHENTICATE (FIRST LOGIN) ==================================================
-// =============================================================================
-
-    // locally --------------------------------
-        // LOGIN ===============================
-        // show the login form
-        app.get('/login', function(req, res) {
-            res.render('login.ejs', { message: req.flash('loginMessage') });
-        });
-
-        // process the login form
-        app.post('/login', passport.authenticate('local-login', {
-            successRedirect : '/profile', // redirect to the secure profile section
-            failureRedirect : '/login', // redirect back to the signup page if there is an error
-            failureFlash : true // allow flash messages
-        }));
-
-        // SIGNUP =================================
-        // show the signup form
-        app.get('/signup', function(req, res) {
-            res.render('signup.ejs', { message: req.flash('signupMessage') });
-        });
-
-        // process the signup form
-        app.post('/signup', passport.authenticate('local-signup', {
-            successRedirect : '/profile', // redirect to the secure profile section
-            failureRedirect : '/signup', // redirect back to the signup page if there is an error
-            failureFlash : true // allow flash messages
-        }));
-
-// =============================================================================
-// UNLINK ACCOUNTS =============================================================
-// =============================================================================
-// used to unlink accounts. for social accounts, just remove the token
-// for local account, remove email and password
-// user account will stay active in case they want to reconnect in the future
-
-    // local -----------------------------------
-    app.get('/unlink/local', isLoggedIn, function(req, res) {
-        var user            = req.user;
-        user.local.email    = undefined;
-        user.local.password = undefined;
-        user.save(function(err) {
-            res.redirect('/profile');
-        });
-    });
-
+    // Middleware to check if user is authenticated
+    function isLoggedIn(req, res, next) {
+        if (req.isAuthenticated()) return next();
+        res.redirect('/login');
+    }
 };
-
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-
-    res.redirect('/');
-}

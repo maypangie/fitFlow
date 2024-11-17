@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>21 Savage Fan Site</title>
+    <title>My Workout Log</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
@@ -17,7 +17,7 @@
     <% } %>
 
     <!-- LOGIN FORM -->
-    <form action="/signup" method="post">
+    <!--<form action="/signup" method="post">
         <div class="form-group">
             <label>Email</label>
             <input type="text" class="form-control" name="email">
@@ -28,7 +28,23 @@
         </div>
 
         <button type="submit" class="btn btn-warning btn-lg">Signup</button>
+    </form> -->
+
+    <form action="/signup" method="POST">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
+    
+
+
+
 
     <hr>
 
@@ -39,3 +55,5 @@
 </div>
 </body>
 </html>
+
+

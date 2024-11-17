@@ -1,6 +1,11 @@
 // config/database.js
 module.exports = {
 
-    'url' : 'mongodb+srv://demo:demo@cluster0.q2ojb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', 
-    'dbName': 'demo'
+    'url' : 'mongodb+srv://earth2may:DDzo2owKmRfAJ96A@myproject2.pwixf.mongodb.net/?retryWrites=true&w=majority&appName=myProject2',
+    'dbName': 'workoutLog'
 };
+
+
+// mongodb+srv://earth2may:DDzo2owKmRfAJ96A@myproject2.pwixf.mongodb.net/?retryWrites=true&w=majority&appName=myProject2
+
+// 'dbname': 'workoutLog'

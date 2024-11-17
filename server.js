@@ -1,54 +1,42 @@
-// server.js
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const passport = require('passport');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const flash = require('connect-flash');
+const morgan = require('morgan');
+const path = require('path');
 
-// set up ======================================================================
-// get all the tools we need
-var express  = require('express');
-var app      = express();
-var port     = process.env.PORT || 8080;
-const MongoClient = require('mongodb').MongoClient
-var mongoose = require('mongoose');
-var passport = require('passport');
-var flash    = require('connect-flash');
+const configDB = require('./config/database');
+require('./config/passport')(passport);
 
-var morgan       = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser   = require('body-parser');
-var session      = require('express-session');
+const PORT = process.env.PORT || 2727;
 
-var configDB = require('./config/database.js');
+// Connect to MongoDB
+mongoose.connect(configDB.url, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Error connecting to MongoDB:', err));
 
-var db
-
-// configuration ===============================================================
-mongoose.connect(configDB.url, (err, database) => {
-  if (err) return console.log(err)
-  db = database
-  require('./app/routes.js')(app, passport, db);
-}); // connect to our database
-
-require('./config/passport')(passport); // pass passport for configuration
-
-// set up our express application
-app.use(morgan('dev')); // log every request to the console
-app.use(cookieParser()); // read cookies (needed for auth)
-app.use(bodyParser.json()); // get information from html forms
+// Middleware
+app.use(morgan('dev'));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'))
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
 
-
-app.set('view engine', 'ejs'); // set up ejs for templating
-
-// required for passport
+// Passport setup
 app.use(session({
-    secret: 'rcbootcamp2021b', // session secret
+    secret: 'mySecretKey',
     resave: true,
     saveUninitialized: true
 }));
 app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-app.use(flash()); // use connect-flash for flash messages stored in session
+app.use(passport.session());
+app.use(flash());
 
+// Routes
+require('./app/routes')(app, passport);
 
-// launch ======================================================================
-app.listen(port);
-console.log('The magic happens on port ' + port);
+// Start the server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
