@@ -1,13 +1,20 @@
-## Installation
+<h1>Welcome to FIT FLOW:</h1>h1>
+A simple and intuitive app to plan and track your weekly workouts!
 
-1. Clone repo
-2. run `npm install`
+<h4>About the Project:</h4>
+The Workout Scheduler is your go-to tool for organizing and managing your weekly fitness routine. 
+Whether you're a beginner or a seasoned fitness enthusiast, this app lets you:
 
-## Usage
+-Schedule workouts for any day of the week.
+-Add descriptions to detail your fitness plans.
+-Mark workouts as complete when you're done.
+-Delete workouts you no longer need.
 
-1. run `node server.js`
-2. Navigate to `localhost:2727`
 
-## Credit
 
-Modified from Scotch.io's auth tutorial
+
+
+
+Navigate to `localhost:2727`
+
+
