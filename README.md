@@ -15,6 +15,6 @@ Schedule workouts for any day of the week.</li>
 
 
 
-Navigate to `localhost:2727`
+// Navigate to `localhost:2727`
 
 
