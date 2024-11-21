@@ -12,8 +12,5 @@ Schedule workouts for any day of the week.</li>
 
 
 
-Clone the Repository:
-git clone https://github.com/maypangie/fitFlow.git
-
 
 
