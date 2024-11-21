@@ -8,7 +8,7 @@ Whether you're a beginner or a seasoned fitness enthusiast, this app lets you:
 Schedule workouts for any day of the week.</li>
 <li>Add descriptions to detail your fitness plans.</li>
 <li>Mark workouts as complete when you're done.</li>
-<li></li>Delete workouts you no longer need.</li>
+<li>Delete workouts you no longer need.</li>
 
 
 
