@@ -1,4 +1,4 @@
-<h1>Welcome to FIT FLOW:</h1>h1>
+<h1>Welcome to FIT FLOW:</h1>
 A simple and intuitive app to plan and track your weekly workouts!
 
 <h4>About the Project:</h4>
