@@ -1,3 +1,9 @@
+
+
+
+<img width="250" alt="workouticon" src="https://github.com/user-attachments/assets/a149d036-77ed-46a9-9e34-89ed07009288">
+
+
 <h1>Welcome to FIT FLOW:</h1>
 A simple and intuitive app to plan and track your weekly workouts!
 
