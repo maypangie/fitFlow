@@ -5,8 +5,8 @@
 
 
 <h1>Welcome to FIT FLOW:</h1>
-https://fitflow-3c9z.onrender.com/ <br>
-A simple and intuitive app to plan and track your weekly workouts!
+A simple and intuitive app to plan and track your weekly workouts! <br>
+https://fitflow-3c9z.onrender.com/ 
 
 <h4>About the Project:</h4>
 The Workout Scheduler is your go-to tool for organizing and managing your weekly fitness routine. 
